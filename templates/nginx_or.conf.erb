@@ -1,0 +1,146 @@
+worker_processes  <%= ENV.fetch('WORKER_PROCESSES',"4") %>;
+
+user <%= ENV.fetch("WEBUSER", "www-data") %>;
+
+error_log /dev/stdout;
+
+pid /tmp/nginx.pid;
+
+events {
+  worker_connections  <%= ENV.fetch('WORKER_CONNECTIONS',"1024") %>;
+}
+
+daemon off;
+
+http {
+  include       /etc/nginx/mime.types;
+  default_type  text/html;
+
+  types_hash_max_size <%= ENV.fetch('TYPES_HASH_MAX_SIZE',"2048") %>;
+  map_hash_bucket_size <%= ENV.fetch('MAP_HASH_BUCKET_SIZE',"64") %>;
+  server_names_hash_bucket_size <%= ENV.fetch('SERVER_NAMES_HASH_BUCKET_SIZE',"64") %>;
+  variables_hash_max_size <%= ENV.fetch('VARIABLES_HASH_MAX_SIZE',"1024") %>;
+
+  log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+    '$status $body_bytes_sent "$http_referer" '
+    '"$http_user_agent"';
+
+  real_ip_header    X-Forwarded-For;
+  real_ip_recursive on;
+
+  access_log /dev/stdout main buffer=8k;
+
+  keepalive_requests <%= ENV.fetch('KEEPALIVE_REQUESTS',"10") %>;
+  keepalive_timeout  <%= ENV.fetch('KEEPALIVE_TIMEOUT',"10") %>;
+
+  gzip  <%= ENV.fetch('GZIP',"on") %>;
+  gzip_comp_level <%= ENV.fetch('GZIP_COMP_LEVEL',"2") %>;
+  gzip_proxied any;
+  gzip_types text/plain text/css application/x-javascript text/xml application/xml application/xml+rss test/javascript;
+
+
+  upstream www_php {
+    server unix:/var/tmp/php5-fpm.sock max_fails=0;
+  }
+
+  server {
+    listen <%= ENV.fetch('PORT', '8080') %>;
+    root <%= ENV.fetch('DOCROOT', '/var/www/html') %>;
+
+    sendfile on;
+    tcp_nopush on;
+
+    client_max_body_size 20M;
+
+    ssi on;
+    ssi_silent_errors off;
+    ssi_types text/plain;
+
+    # this is nginx status
+    location = /hc {
+      auth_basic off;
+      stub_status on;
+      return 200 'OK';
+    }
+
+    # this is nginx status
+    location = /server-status {
+      auth_basic off;
+      allow 10.0.0.0/8;
+      allow 127.0.0.1;
+      deny   all;
+      stub_status on;
+    }
+
+    proxy_connect_timeout 5;
+    proxy_intercept_errors on;
+    proxy_redirect off;
+
+    set $no_cache "";
+
+
+    # this is php-fpm status enabled in /etc/php5/fpm/pool.d/www.conf
+    location = /fpm-status {
+      auth_basic off;
+      fastcgi_pass www_php;
+      fastcgi_cache off;
+      allow 10.0.0.0/8;
+      allow 127.0.0.1;
+      deny   all;
+    }
+
+    # this is php-fpm ping, enabled in /etc/php5/fpm/pool.d/www.conf
+    location = /fpm-ping {
+      auth_basic off;
+      fastcgi_pass www_php;
+      fastcgi_cache off;
+      allow 10.0.0.0/8;
+      allow 127.0.0.1;
+      deny   all;
+    }
+
+    location = /favicon.ico {
+      auth_basic off;
+      expires max;
+      log_not_found off;
+      access_log off;
+      try_files $uri @rewrite;
+    }
+
+    location = /robots.txt {
+      auth_basic off;
+      allow all;
+      log_not_found off;
+      access_log off;
+      try_files $uri @rewrite;
+    }
+
+    location ~ \..*/.*\.php$ {
+      return 403;
+    }
+
+    location / {
+      try_files $uri @rewrite;
+    }
+
+    location @rewrite {
+      # Some modules enforce no slash (/) at the end of the URL
+      # Else this rewrite block wouldn't be needed (GlobalRedirect)
+      rewrite ^/(.*)$ /index.php?q=$1 last;
+    }
+
+    location ~ \.php$ {
+
+      fastcgi_split_path_info ^(.+\.php)(/.+)$;
+      include /etc/nginx/fastcgi.conf;
+      fastcgi_param   SCRIPT_FILENAME         $document_root$fastcgi_script_name;
+      fastcgi_cache_bypass $no_cache;
+
+      fastcgi_read_timeout 120s;
+      fastcgi_send_timeout 120s;
+      fastcgi_index index.php;
+      fastcgi_intercept_errors on;
+      fastcgi_pass www_php;
+    }
+  }
+}

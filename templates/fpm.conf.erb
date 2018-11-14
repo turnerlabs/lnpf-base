@@ -1,0 +1,41 @@
+;;;;;;;;;;;;;;;;;;;;;
+; FPM Configuration ;
+;;;;;;;;;;;;;;;;;;;;;
+
+pid = /var/tmp/php5-fpm.pid
+error_log = /dev/stdout
+emergency_restart_threshold = 10
+emergency_restart_interval = 1m
+process_control_timeout = 10s
+
+
+[www]
+user = <%= ENV.fetch("WEBUSER", "www-data") %>
+group = <%= ENV.fetch("WEBGROUP", "www-data") %>
+listen = /var/tmp/php5-fpm.sock
+listen.backlog = -1
+listen.owner = <%= ENV.fetch("WEBUSER", "www-data") %>
+listen.group = <%= ENV.fetch("WEBGROUP", "www-data") %>
+listen.mode = 0666
+pm = static
+pm.max_children = <%= ENV.fetch("FPM_MAX_CHILDREN", 8) %>
+pm.start_servers = <%= ENV.fetch("FPM_START_SERVERS", 10) %>
+pm.min_spare_servers = <%= ENV.fetch("FPM_MIN_SPARE_SERVERS", 5) %>
+pm.max_spare_servers = <%= ENV.fetch("FPM_MAX_SPARE_SERVERS", 15) %>
+pm.max_requests = <%= ENV.fetch("FPM_MAX_REQUESTS", 499) %>
+pm.status_path = /fpm-status
+ping.path = /fpm-ping
+ping.response = pong
+access.log = /dev/stdout
+access.format = %t " %p %m %r%Q%q " %s %f %{seconds}d %{mega}M %C%%
+slowlog = /dev/stdout
+request_slowlog_timeout = <%= ENV.fetch("FPM_SLOWLOG_TIMEOUT", "10s") %>
+request_terminate_timeout = <%= ENV.fetch("FPM_TERMINATE_TIMEOUT", "120s") %>
+rlimit_files = 131072
+rlimit_core = unlimited
+chdir = /
+catch_workers_output = yes
+env[HOSTNAME] = $HOSTNAME
+env[TMP] = /tmp
+env[TMPDIR] = /tmp
+env[TEMP] = /tmp
