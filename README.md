@@ -9,6 +9,6 @@ RESTY_VERSION="1.13.6.2"
 
 #### FROM php:7.2.14-fpm-alpine3.8
 
-valid tags: alpine-latest alpine-0.1.0 7.2.14-fpm-alpine3.8-0.1.0
+valid tags: alpine-latest alpine-0.1.2 7.2.14-fpm-alpine3.8-0.1.2 
 
 
