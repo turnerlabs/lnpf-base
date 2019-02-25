@@ -166,7 +166,9 @@ RUN rm -rf /var/cache/apk/*
 RUN mkdir -p /var/tmp/templates
 ADD templates/* /var/tmp/templates/
 ADD contrib/start.sh /var/tmp/start.sh
-RUN chmod 755 /var/tmp/start.sh
+RUN chmod 755 /var/tmp/start.sh \
+    && mkdir /run/nginx \
+    && chown -R www-data:www-data /run/nginx /var/www /var/tmp/nginx /var/lib/nginx /var/log/nginx
 
 # process default templates.
 RUN set -ex \
