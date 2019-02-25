@@ -6,6 +6,8 @@ ARG RESTY_OPENSSL_VERSION="1.0.2k"
 ARG RESTY_PCRE_VERSION="8.42"
 ARG RESTY_J="1"
 ARG RESTY_CONFIG_OPTIONS="\
+    --user=www-data \
+    --group=www-data \
     --with-file-aio \
     --with-http_addition_module \
     --with-http_auth_request_module \
@@ -166,9 +168,7 @@ RUN rm -rf /var/cache/apk/*
 RUN mkdir -p /var/tmp/templates
 ADD templates/* /var/tmp/templates/
 ADD contrib/start.sh /var/tmp/start.sh
-RUN chmod 755 /var/tmp/start.sh \
-    && mkdir /run/nginx \
-    && chown -R www-data:www-data /run/nginx /var/www /var/tmp/nginx /var/lib/nginx /var/log/nginx
+RUN chmod 755 /var/tmp/start.sh 
 
 # process default templates.
 RUN set -ex \
