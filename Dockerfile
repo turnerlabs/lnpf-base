@@ -64,6 +64,7 @@ RUN set -ex \
           libbz2 \
           libcurl \
           libgcc \
+          libmemcached-dev \
           libressl \
           libxslt \
           nginx \
@@ -124,7 +125,6 @@ RUN set -ex \
           libc-dev \
           libjpeg-turbo-dev \
           libmcrypt-dev \
-          libmemcached-dev \
           libpng-dev \
           libxml2-dev \
           libxslt-dev \
@@ -157,6 +157,7 @@ RUN set -ex \
     && apk add --virtual .drupal-phpexts-rundeps $runDeps \
     && git clone -b NON_BLOCKING_IO_php7 https://github.com/websupport-sk/pecl-memcache.git \
     && cd pecl-memcache \
+    && git checkout 4a9e4ab0d12150805feca3012854de9fd4e5a721 \
     && phpize \
     && ./configure \
     && make \
