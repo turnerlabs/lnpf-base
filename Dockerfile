@@ -1,4 +1,4 @@
-FROM php:7.2.14-fpm-alpine3.8
+FROM php:7.2.16-fpm-alpine3.9
 
 # Docker Build Arguments
 ARG RESTY_VERSION="1.13.6.2"
@@ -54,7 +54,6 @@ ENV PATH=$PATH:/usr/local/openresty/luajit/bin:/usr/local/openresty/nginx/sbin:/
 # Add persistent dependencies
 RUN set -ex \
     && apk update \
-    && apk del .persistent-deps \
     && apk add --virtual .persistent-deps \
           bash \
           bzip2 \
