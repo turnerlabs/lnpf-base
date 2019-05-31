@@ -1,9 +1,12 @@
-FROM php:7.2.16-fpm-alpine3.9
+FROM php:7.2.18-fpm-alpine3.9
 
 # Docker Build Arguments
 ARG RESTY_VERSION="1.13.6.2"
-ARG RESTY_OPENSSL_VERSION="1.0.2k"
+ARG RESTY_OPENSSL_VERSION="1.0.2s"
 ARG RESTY_PCRE_VERSION="8.42"
+ARG REDIS_VERSION="4.0.1"
+ARG MEMCACHED_VERSION="3.0.4"
+ARG XDEBUG_VERSION="2.6.0"
 ARG RESTY_J="1"
 ARG RESTY_CONFIG_OPTIONS="\
     --user=www-data \
@@ -150,9 +153,9 @@ RUN set -ex \
                         | sort -u \
                         | awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
     )" \
-    && pecl install redis-4.0.1 \
-    && pecl install memcached-3.0.4 \
-    && pecl install xdebug-2.6.0 \
+    && pecl install redis-${REDIS_VERSION} \
+    && pecl install memcached-${MEMCACHED_VERSION} \
+    && pecl install xdebug-${XDEBUG_VERSION} \
     && apk add --virtual .drupal-phpexts-rundeps $runDeps \
     && git clone -b NON_BLOCKING_IO_php7 https://github.com/websupport-sk/pecl-memcache.git \
     && cd pecl-memcache \
