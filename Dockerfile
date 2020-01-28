@@ -1,4 +1,4 @@
-FROM php:7.3.11-fpm-alpine3.11
+FROM php:7.3.14-fpm-alpine3.11
 
 # Docker Build Arguments
 ARG RESTY_VERSION="1.15.8.2"
