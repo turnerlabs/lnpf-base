@@ -162,7 +162,7 @@ RUN set -ex \
 
 RUN rm -rf /var/cache/apk/*
 
-RUN mkdir -p /var/tmp/templates
+RUN mkdir -p /var/tmp/templates /var/tmp/nginx
 ADD templates/* /var/tmp/templates/
 ADD contrib/start.sh /var/tmp/start.sh
 RUN chmod 755 /var/tmp/start.sh 
