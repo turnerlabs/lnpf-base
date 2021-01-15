@@ -1,12 +1,12 @@
-FROM php:7.3.14-fpm-alpine3.11
+FROM php:7.4.14-fpm-alpine3.12
 
 # Docker Build Arguments
-ARG RESTY_VERSION="1.15.8.2"
-ARG RESTY_OPENSSL_VERSION="1.0.2t"
-ARG RESTY_PCRE_VERSION="8.43"
-ARG REDIS_VERSION="5.0.2"
-ARG MEMCACHED_VERSION="3.1.4"
-ARG XDEBUG_VERSION="2.7.2"
+ARG RESTY_VERSION="1.15.8.3"
+ARG RESTY_OPENSSL_VERSION="1.1.1i"
+ARG RESTY_PCRE_VERSION="8.44"
+ARG REDIS_VERSION="5.1.1"
+ARG MEMCACHED_VERSION="3.1.5"
+ARG XDEBUG_VERSION="2.8.1"
 ARG RESTY_J="1"
 ARG RESTY_CONFIG_OPTIONS="\
     --user=www-data \
@@ -88,12 +88,22 @@ RUN apk add --no-cache --virtual .or-build-deps \
         perl-dev \
         readline-dev \
         zlib-dev \
+        gnupg \
     && cd /tmp \
     && curl -fSL https://www.openssl.org/source/openssl-${RESTY_OPENSSL_VERSION}.tar.gz -o openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
+    && curl -fSL https://www.openssl.org/source/openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 -o openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 \
+    && sha256sum openssl-${RESTY_OPENSSL_VERSION}.tar.gz | cut -f1 -d" " | grep - -qf openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 \
     && tar xzf openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
     && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
+    && curl -fSL https://ftp.pcre.org/pub/pcre/Public-Key -o pcre-Public-Key \
+    && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz.sig -o pcre-${RESTY_PCRE_VERSION}.tar.gz.sig \
+    && gpg --import pcre-Public-Key \
+    && gpg --verify pcre-${RESTY_PCRE_VERSION}.tar.gz.sig pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && tar xzf pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && curl -fSL https://openresty.org/download/openresty-${RESTY_VERSION}.tar.gz -o openresty-${RESTY_VERSION}.tar.gz \
+    && curl -fSL https://openresty.org/download/openresty-${RESTY_VERSION}.tar.gz.asc -o openresty-${RESTY_VERSION}.tar.gz.asc \
+    && gpg --keyserver keys.gnupg.net --recv-key A0E98066 \
+    && gpg --verify openresty-${RESTY_VERSION}.tar.gz.asc \
     && tar xzf openresty-${RESTY_VERSION}.tar.gz \
     && cd /tmp/openresty-${RESTY_VERSION} \
     && ./configure -j${RESTY_J} ${_RESTY_CONFIG_DEPS} ${RESTY_CONFIG_OPTIONS} ${RESTY_CONFIG_OPTIONS_MORE} \
@@ -132,10 +142,10 @@ RUN set -ex \
           libxslt-dev \
           libzip-dev \
           postgresql-dev \
+          oniguruma-dev \
     && docker-php-ext-configure gd \
-                --with-freetype-dir=/usr/include/ \
-                --with-jpeg-dir=/usr/include/ \
-                --with-png-dir=/usr/include/ \
+                --with-freetype \
+                --with-jpeg \
     && docker-php-ext-install -j "$(nproc)" \
           bcmath \
           bz2 \
