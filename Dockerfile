@@ -95,14 +95,12 @@ RUN apk add --no-cache --virtual .or-build-deps \
     && sha256sum openssl-${RESTY_OPENSSL_VERSION}.tar.gz | cut -f1 -d" " | grep - -qf openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 \
     && tar xzf openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
     && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
-    && curl -fSL https://ftp.pcre.org/pub/pcre/Public-Key -o pcre-Public-Key \
     && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz.sig -o pcre-${RESTY_PCRE_VERSION}.tar.gz.sig \
-    && gpg --import pcre-Public-Key \
+    && gpg --keyserver keys.gnupg.net --recv-key 9766E084FB0F43D8 B550E09EA0E98066 \
     && gpg --verify pcre-${RESTY_PCRE_VERSION}.tar.gz.sig pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && tar xzf pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && curl -fSL https://openresty.org/download/openresty-${RESTY_VERSION}.tar.gz -o openresty-${RESTY_VERSION}.tar.gz \
     && curl -fSL https://openresty.org/download/openresty-${RESTY_VERSION}.tar.gz.asc -o openresty-${RESTY_VERSION}.tar.gz.asc \
-    && gpg --keyserver keys.gnupg.net --recv-key A0E98066 \
     && gpg --verify openresty-${RESTY_VERSION}.tar.gz.asc \
     && tar xzf openresty-${RESTY_VERSION}.tar.gz \
     && cd /tmp/openresty-${RESTY_VERSION} \
