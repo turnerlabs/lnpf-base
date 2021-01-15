@@ -5,9 +5,9 @@ This image will try to have the latest official alpine php.
 
 We use openresty for our nginx layer:
 
-RESTY_VERSION="1.15.8.2"
+RESTY_VERSION="1.15.8.3"
 
-#### FROM php:7.3.14-fpm-alpine3.11
+#### FROM php:7.4.14-fpm-alpine3.12
 
-valid tags: alpine-latest alpine-0.3.3 0.3.3-php7.3.14-fpm-alpine3.11
+valid tags: alpine-latest alpine-0.6.0 0.6.0-php7.4.14-fpm-alpine3.12
 
