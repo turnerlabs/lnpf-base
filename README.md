@@ -7,7 +7,7 @@ We use openresty for our nginx layer:
 
 RESTY_VERSION="1.15.8.3"
 
-#### FROM php:7.4.19-fpm-alpine3.13
+#### FROM php:7.4.20-fpm-alpine3.13
 
-valid tags: alpine-latest alpine-0.6.4 0.6.4-php7.4.19-fpm-alpine3.13
+valid tags: alpine-latest alpine-0.6.5 0.6.5-php7.4.20-fpm-alpine3.13
 
