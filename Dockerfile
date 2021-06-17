@@ -96,7 +96,7 @@ RUN apk add --no-cache --virtual .or-build-deps \
     && tar xzf openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
     && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz.sig -o pcre-${RESTY_PCRE_VERSION}.tar.gz.sig \
-    && gpg --keyserver keys.gnupg.net --recv-key 9766E084FB0F43D8 B550E09EA0E98066 \
+    && gpg --keyserver pool.sks-keyservers.net --recv-key 9766E084FB0F43D8 B550E09EA0E98066 \
     && gpg --verify pcre-${RESTY_PCRE_VERSION}.tar.gz.sig pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && tar xzf pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && curl -fSL https://openresty.org/download/openresty-${RESTY_VERSION}.tar.gz -o openresty-${RESTY_VERSION}.tar.gz \
