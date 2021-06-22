@@ -95,8 +95,16 @@ RUN apk add --no-cache --virtual .or-build-deps \
     && sha256sum openssl-${RESTY_OPENSSL_VERSION}.tar.gz | cut -f1 -d" " | grep - -qf openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 \
     && tar xzf openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
     && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
-    && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz.sig -o pcre-${RESTY_PCRE_VERSION}.tar.gz.sig \
-    && gpg --keyserver pool.sks-keyservers.net --recv-key 9766E084FB0F43D8 B550E09EA0E98066 \
+    && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz.sig -o pcre-${RESTY_PCRE_VERSION}.tar.gz.sig \ 
+    && for key in \
+      B550E09EA0E98066 \
+      9766E084FB0F43D8 \
+    ; do \
+      gpg --batch --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys "$key" || \
+      gpg --batch --keyserver hkp://ipv4.pool.sks-keyservers.net --recv-keys "$key" || \
+      gpg --batch --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys "$key" || \
+      gpg --batch --keyserver hkp://pgp.mit.edu:80 --recv-keys "$key" ; \
+    done \
     && gpg --verify pcre-${RESTY_PCRE_VERSION}.tar.gz.sig pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && tar xzf pcre-${RESTY_PCRE_VERSION}.tar.gz \
     && curl -fSL https://openresty.org/download/openresty-${RESTY_VERSION}.tar.gz -o openresty-${RESTY_VERSION}.tar.gz \
