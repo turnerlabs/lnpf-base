@@ -9,5 +9,5 @@ RESTY_VERSION="1.19.3.2"
 
 #### FROM php:7.4.20-fpm-alpine3.13
 
-valid tags: alpine-latest alpine-0.7.1 0.7.1-php7.4.20-fpm-alpine3.13
+valid tags: alpine-latest alpine-0.7.2 0.7.2-php7.4.20-fpm-alpine3.13
 
