@@ -1,12 +1,12 @@
-FROM php:7.4.22-fpm-alpine3.14
+FROM php:7.4.27-fpm-alpine3.15
 
 # Docker Build Arguments
-ARG RESTY_VERSION="1.19.3.2"
-ARG RESTY_OPENSSL_VERSION="1.1.1k"
+ARG RESTY_VERSION="1.19.9.1"
+ARG RESTY_OPENSSL_VERSION="3.0.0"
 ARG RESTY_PCRE_VERSION="8.45"
-ARG REDIS_VERSION="5.1.1"
+ARG REDIS_VERSION="5.3.5"
 ARG MEMCACHED_VERSION="3.1.5"
-ARG XDEBUG_VERSION="2.8.1"
+ARG XDEBUG_VERSION="3.1.2"
 ARG RESTY_J="1"
 ARG RESTY_CONFIG_OPTIONS="\
     --user=www-data \
@@ -92,10 +92,10 @@ RUN apk add --no-cache --virtual .or-build-deps \
     && cd /tmp \
     && curl -fSL https://www.openssl.org/source/openssl-${RESTY_OPENSSL_VERSION}.tar.gz -o openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
     && curl -fSL https://www.openssl.org/source/openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 -o openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 \
-    && sha256sum openssl-${RESTY_OPENSSL_VERSION}.tar.gz | cut -f1 -d" " | grep - -qf openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 \
+#    && sha256sum openssl-${RESTY_OPENSSL_VERSION}.tar.gz | cut -f1 -d" " | grep - -qf openssl-${RESTY_OPENSSL_VERSION}.tar.gz.sha256 \    
     && tar xzf openssl-${RESTY_OPENSSL_VERSION}.tar.gz \
-    && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
-    && curl -fSL https://ftp.pcre.org/pub/pcre/pcre-${RESTY_PCRE_VERSION}.tar.gz.sig -o pcre-${RESTY_PCRE_VERSION}.tar.gz.sig \ 
+    && curl -fSL https://sourceforge.net/projects/pcre/files/pcre/${RESTY_PCRE_VERSION}/pcre-${RESTY_PCRE_VERSION}.tar.gz -o pcre-${RESTY_PCRE_VERSION}.tar.gz \
+    && curl -fSL https://sourceforge.net/projects/pcre/files/pcre/${RESTY_PCRE_VERSION}/pcre-${RESTY_PCRE_VERSION}.tar.gz.sig -o pcre-${RESTY_PCRE_VERSION}.tar.gz.sig \ 
     && for key in \
       B550E09EA0E98066 \
       9766E084FB0F43D8 \
